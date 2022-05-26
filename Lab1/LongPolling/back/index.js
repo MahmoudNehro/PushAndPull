@@ -1,31 +1,31 @@
 const express= require('express')
 const cors= require('cors');
-const port=process.env.Port||3001;
 const app=express();
-app.use(express.json());
 app.use(cors());
+
+app.use(express.json());
 
 // view engine setup
 const subscribers ={};
 
-//call server server hangs
-app.get('/long-messages', ((req, res, next) => {
+app.get('/long-messages', ((req, res) => {
     const id= Math.ceil(Math.random()*100)
     subscribers[id]=res;
 }))
 
 
 
-app.post('/long-messages', (req, res, next)=>{
-    console.log(req.body);
-    Object.values(subscribers).forEach(([id,response])=>{
+app.post('/long-messages', (req, res)=>{
+    const {body} = req;
+    console.log(body);
+    Object.entries(subscribers).forEach(([id,response])=>{
      response.json(req.body);
      delete subscribers[id]
     });
-    res.status(204).end();
+    res.sendStatus(204);
 })
 
-app.listen(port,()=>{
-    console.log(`server running on port:${port}`)
+app.listen(3001,()=>{
+    console.log(`server running on port:3001`)
 })
  

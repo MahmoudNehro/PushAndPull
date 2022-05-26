@@ -1,29 +1,29 @@
-import logo from './logo.svg';
-import postData from './helpres/fetch';
 import './App.css';
 import {useEffect, useState} from "react";
-
-
+import axios from 'axios';
+const URL = 'http://localhost:3001'
 const LongPolling =(props)=>{
-  const[messages,setMessages]=useState([]);
-  const[message,setMessage]=useState('');
+    const[messages,setMessages]=useState([]);
+    const[message,setMessage]=useState('');
 
-  const handleSubmit=(e)=>{
-    e.preventDefault();
-    postData('http://localhost:3001/messages', { message })
-        .then(data => {
-          console.log(data); // JSON data parsed by `data.json()` call
-        setMessage('');
-        });
-  }
-  useEffect(()=>{
-    fetch('http://localhost:3001/messages/subscribe')
-        .then((res) => res.json())
-        .then((data) =>{
-          // messages.push(message)
-          setMessages(messages.concat(data))
-        })
-  },[messages])
+    const handleSubmit=(e)=>{
+        e.preventDefault();
+        axios.post(`${URL}/long-messages`, { message }).catch(console.log)
+        .then(()=> setMessage(''));
+
+           
+    }
+
+   useEffect(()=>{
+     axios.get(`${URL}/long-messages`)
+     .then(({data})=>{
+      setMessages(messages.concat(data));
+     });
+   },[messages]);
+   
+
+
+    
   return(
       <>
       <div className="form-wrapper">
